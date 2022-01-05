@@ -11,7 +11,14 @@ Ideally, I would like to have an interactive mode, where it encrypts/decrypts in
 real time like the real thing, but also have a way to just feed the program text
 and have it auto encrypt/decrypt the whole thing at once.
 
-## How it Works
+## Research
+
+### References
+
+- [How did the Enigma Machine Work?](https://www.youtube.com/watch?v=ybkkiGtJmkM)
+YouTube video by "Jared Owen"
+
+### How it Works
 
 - Hit a key
 - Electricity flows to:
@@ -37,7 +44,7 @@ it to rotate twice in 26 movements.
 
 [Turnover positions](https://en.wikipedia.org/wiki/Enigma_rotor_details#Turnover_notch_positions)
 
-## Setting Up the Enigma
+### Setting Up the Enigma
 
 Rotor Order - The order that the rotors are slotted into the enigma, and which
 rotors they are.
@@ -53,7 +60,7 @@ Plug board configuration at the front
 
 And on later models, the reflector was configurable as well.
 
-## How it was used
+### How it was used
 
 Rotor Order, Ring Setting, Plug Board Configuration, and the Reflector
 Configuration was written down in a codebook, and changed every day (except the
@@ -80,7 +87,7 @@ The receiver gets the WZA start position, and enters UHL which decrypts to our
 key SXT. The receiver then sets the starting position to SXT and enters the
 cyphertext to get the plaintext message.
 
-## Rotor Wiring
+### Rotor Wiring
 
 [See this chart](https://en.wikipedia.org/wiki/Enigma_rotor_details#Rotor_wiring_tables)
 for rotor wirings. There were a number of rotors used.
