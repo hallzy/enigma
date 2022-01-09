@@ -1,15 +1,65 @@
 # Enigma
 
-This is a work in progress, but I would like to make a program that emulates the
-workings of the Enigma Machine with some preset rotor configurations that were
-actually used.
+## Build
 
-I haven't decided on a language yet, but below is my research on how the enigma
-works so that I can build it.
+Build with `make`. That is it.
 
-Ideally, I would like to have an interactive mode, where it encrypts/decrypts in
-real time like the real thing, but also have a way to just feed the program text
-and have it auto encrypt/decrypt the whole thing at once.
+## Usage
+
+Configure your Enigma machine in the configuration.txt file.
+
+Right now, the order of the lines matters, and so does the descriptive text at
+the beginning of each line, so don't change those. The values after the `:` can
+be changed freely, so long as the rotors and reflectors you choose are defined
+in `Rotors/WWII.hs`.
+
+The real enigma only had 3 or 4 rotors depending on the model, and it came with
+10 plugs for the plug board. I do not do checks for this, so you can add as many
+rotors and plugs as you want, so long as there are the same number of ring
+settings and starting positions as there are rotors, and as long as you don't
+connect duplicate letters with the plug board (ie, this enigma supports a
+plugboard with the number of plugs ranging from 0 to 13, since if 13 plugs are
+used then all the letters are swapped).
+
+Ring settings can be either numeric and alphabetic (For example, `B` is allowed,
+and so is `2` or `02`. All of which mean the same thing).
+
+Once Configured, just run the binary:
+
+```bash
+$ ./enigma 'The message you would like to encrypt.'
+```
+
+(In order to decrypt with Enigma, you just need to setup Enigma with the same
+configuration as when the original text was encrypted, and provide the encrypted
+text to the enigma binary).
+
+Running this will either give you an error message if there was some problem
+with your configuration, or it will produce information that looks like this:
+
+```
+Reflector:     "CTHIN"
+Rotors:        ["GAMMA","VIII","V","VI"]
+Ring Settings: [8,13,23,15] aka ["H","M","W","O"]
+Start Pos:     [10,17,12,1] aka ["J","Q","L","A"]
+Plug Board:    ["BQ","CR","DI","EJ","KW","MT","OS","PX","UZ","GH"]
+
+Input:  THEM ESSA GEYO UWOU LDLI KETO ENCR YPTX
+Output: FKAT CMMV ICRY LQWB MTSR TXGC UMXT EJEW
+```
+
+It gives you a summary of your settings as parsed by the program (The ring
+settings and starting position are provided a characters and numbers for
+convenience).
+
+The input is broken into groups of 4 and so is the output. This is how text was
+written out with Enigma before and after encrypting/decrypting, so I do the
+same.
+
+Enigma is not able to encrypt non alpha characters, so spaces, numbers, and
+special characters and punctuation are all removed except for the period (`.`),
+which is swapped for an `X` on the input automatically, as that was the standard
+practice during WWII.
 
 ## Research
 
@@ -21,26 +71,45 @@ YouTube video by "Jared Owen"
 ### How it Works
 
 - Hit a key
-- Electricity flows to:
-    - The plugboard
-    - The rotors
-    - The plugboard
-    - Lightbulb
+- Electricity follows this path:
+    - Plugboard
+    - Far right rotor
+    - Next rotor to the left etc until it goes through the last rotor
+    - Reflector
+    - Back through the rotors in the reverse order
+    - Plugboard
+    - Light bulb
 
 When electricity goes to the rotors, it travels through all the rotors that are
 there, then through the reflector, which is sort of another rotor that turns the
-electricity back through the rotors it just came through. The reflector also
-changes the letter.
+electricity back through the rotors it just came through. The reflector can also
+change the letters.
 
-Every time a key is pressed the right most rotor turns, going up numerically. The
-other rotors only turn once the rotor to the right of it has rotated to a
-specific point, which is different for each rotor. If that point is at 26, then
-when the rotor goes from 26 to a 1, the rotor to the left will increase by 1.
-The next time that rotor will increase is when the first rotor is back at 26
-again.
+Every time a key is pressed the right most rotor turns, going up numerically.
+
+The next rotor to the left will turn once the rotor to the right of it reaches
+its notch (notches are at different positions for each rotor).
+
+Because of how the mechanism works, if a notch is in the right place for a rotor
+to turn, it will also rotate the rotor to the right of it. You never notice this
+with the 2 right most rotors because the right most rotor always rotates once
+anyways, but sometimes it can cause the other rotors to behave this way (In this
+scnenario, a rotor will never rotate more than once per key press though).
 
 Some rotors had 2 notches though. So some rotors would cause the rotor next to
 it to rotate twice in 26 movements.
+
+Some rotors have 0 notches. These are the `Beta` and `Gamma` rotors which were
+used by the German Navy who used 4 rotor Enigmas. The `Beta` and `Gamma` rotors
+were meant to be used as the far left rotor only, so the notches weren't needed
+(this rule is not enforced in my enigma, you can but the beta and gamma rotors
+wherever you want).
+
+The 4 rotor system also was only able to use the `Thin` reflectors, to make room
+for the extra rotor. `BThin` is thinner than the `B` reflector, to make room for
+the rotor, but the wiring of `BThin` is also totally different from reflector
+`B`. Again, this is not enforced by my engima. You can use the thin reflectors
+with any amount of rotors.
 
 [Turnover positions](https://en.wikipedia.org/wiki/Enigma_rotor_details#Turnover_notch_positions)
 
@@ -91,6 +160,3 @@ cyphertext to get the plaintext message.
 
 [See this chart](https://en.wikipedia.org/wiki/Enigma_rotor_details#Rotor_wiring_tables)
 for rotor wirings. There were a number of rotors used.
-
-It seems that the common wirings are the I, II, III, IV, and V rotors, so I will
-use those here.

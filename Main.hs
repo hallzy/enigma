@@ -116,16 +116,31 @@ parseRingSettings settings = foldl' folder ([], []) settings
                 charVal = head str
                 intVal = (read str) :: Int
 
+validateRotorConfigs :: [String] -> ([Int], [String]) -> ([Int], [String]) -> ([String], ([Int], [String]), ([Int], [String]))
+validateRotorConfigs rotors rings start
+    | sameCount = (rotors, rings, start)
+    | otherwise = error "There needs to be the same number of rotors, ring settings, and starting positions in the config."
+    where
+        numRotors = length rotors
+        numIntRings = length $ fst rings
+        numStrRings = length $ snd rings
+        numIntStart = length $ fst start
+        numStrStart = length $ snd start
+
+        sameCount = 1 == (length $ group [numRotors, numIntRings, numStrRings, numIntStart, numStrStart])
+
 main :: IO ()
 main = do
     fileContent <- readFile "configuration.txt"
     let config = map words $ lines fileContent
 
-    let rotors           = list2upper $ reverse $ drop 1 $ head config
-    let reflector        = str2upper $ head $ drop 1 $ head $ drop 1 config
-    let ringSettings     = parseRingSettings $ list2upper $ drop 2 $ head $ drop 2 config
-    let plugBoard        = validatePlugBoard $ list2upper $ drop 2 $ head $ drop 3 config
-    let startingPosition = parseRingSettings $ list2upper $ drop 2 $ head $ drop 4 config
+    let rotorsX           = list2upper $ reverse $ drop 1 $ head config
+    let reflector         = str2upper $ head $ drop 1 $ head $ drop 1 config
+    let ringSettingsX     = parseRingSettings $ list2upper $ drop 2 $ head $ drop 2 config
+    let plugBoard         = validatePlugBoard $ list2upper $ drop 2 $ head $ drop 3 config
+    let startingPositionX = parseRingSettings $ list2upper $ drop 2 $ head $ drop 4 config
+
+    let (rotors, ringSettings, startingPosition) = validateRotorConfigs rotorsX ringSettingsX startingPositionX
 
     let plugBoardMap = createPlugBoardMap plugBoard
 
