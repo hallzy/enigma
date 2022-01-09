@@ -1,0 +1,5 @@
+Rotors:            Gamma VIII V VI
+Reflector:         CThin
+Ring Settings:     8 13 23 15
+Plug Board:        bq cr di ej kw mt os px uz gh
+Starting Position: 10 17 12 1
